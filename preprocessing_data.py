@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 
+from sklearn.preprocessing import LabelEncoder
+
 df = pd.read_csv('data/train.csv')
 df_test = pd.read_csv('data/test.csv')
 
@@ -11,10 +13,10 @@ CATEGORICAL_COLUMNS = [col for col in df.columns if col.endswith('bin') or col.e
 NUMERIC_COLUMNS = [col for col in df.columns if  not col.endswith('bin') and not col.endswith('cat')]
 
 # missing values mark as -1
-# add 2 so every categorical value start from 1
 for col in CATEGORICAL_COLUMNS:
-    df[col] = df[col] + 2
-    df_test[col] = df_test[col] + 2
+    l_enc = LabelEncoder()
+    df[col] = l_enc.fit_transform(df[col].values)
+    df_test[col] = l_enc.transform(df_test[col].values)
     
 df.to_csv('data/processed_train.csv', index=False)
 df_test.to_csv('data/processed_test.csv', index=False)
